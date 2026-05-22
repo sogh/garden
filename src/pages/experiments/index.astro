@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const experiments = await getCollection('experiments', e => !e.data.draft);
+experiments.sort((a, b) =>
+  (b.data.updated ?? b.data.created).getTime() -
+  (a.data.updated ?? a.data.created).getTime()
+);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+// strip trailing /index from ids
+const slugify = (id: string) => id.replace(/\/index$/, '');
+---
+
+<BaseLayout title="experiments" narrow>
+  <h1>experiments</h1>
+  <p style="color: var(--ink-muted); font-style: italic;">
+    Self-contained tinkerings. Some live, some half-built, some abandoned.
+  </p>
+  <ul class="feed">
+    {experiments.map(e => (
+      <li class="feed-item">
+        <div class="feed-item-head">
+          <a class="feed-item-title" href={`/experiments/${slugify(e.id)}`}>{e.data.title}</a>
+          <span class="feed-item-meta">{fmtDate(e.data.updated ?? e.data.created)}</span>
+        </div>
+        {e.data.stack.length > 0 && (
+          <div class="experiment-stack">
+            {e.data.stack.map(s => <span class="chip">{s}</span>)}
+          </div>
+        )}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

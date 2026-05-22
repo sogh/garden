@@ -1,0 +1,37 @@
+---
+title: "The Harmonic Atlas project"
+created: 2026-05-15
+updated: 2026-05-22
+tags: [music-theory, harmonic-atlas, projects]
+growth: budding
+source: human
+stack: [vanilla-js, tone-js, rust, wasm]
+repo: https://github.com/sogh/fretboard-explorer
+---
+
+import WasmEmbed from '../../../components/WasmEmbed.astro';
+
+The umbrella project formerly known as `fretboard-explorer`. Multi-instrument
+music theory tools, with the Barry Harris 6th-diminished scale tool as the
+current centerpiece. The theory engine ([[harmonia]]) lives as its own Rust
+crate, dependency-free.
+
+## Current focus
+
+Drop-2 voicing overlay on the 6th-diminished tool. The idea is to *show* the
+voicings as fretboard shapes rather than explain them in prose.
+
+{/* When the WASM demo is built, drop it in like this: */}
+{/* <WasmEmbed src="/experiments/harmonic-atlas/drop2.html" height={520} /> */}
+
+## What's next
+
+- Practice Sequencer module (tool #7) — see [[practice-sequencer-design]]
+- iOS navigation rework — content-first four tabs
+- Learn Mode scaffold — physics-first theory exposition
+
+## Why this matters
+
+Most music theory tools *explain*. I want to build ones that *reveal* — so
+the structure shows up in the artifact itself and you can feel it under your
+hands before you have language for it.

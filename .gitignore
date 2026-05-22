@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# local garden config (commit the .example instead)
+garden.config.json
+
+# logs
+npm-debug.log*
+*.log
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/

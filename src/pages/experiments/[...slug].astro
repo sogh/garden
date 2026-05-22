@@ -1,0 +1,24 @@
+---
+import { getCollection, render } from 'astro:content';
+import NoteLayout from '../../layouts/NoteLayout.astro';
+
+export async function getStaticPaths() {
+  const experiments = await getCollection('experiments', e => !e.data.draft);
+  return experiments.map(e => ({
+    params: { slug: e.id.replace(/\/index$/, '') },
+    props: { entry: e },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<NoteLayout frontmatter={entry.data} slug={entry.id}>
+  {entry.data.stack.length > 0 && (
+    <div class="experiment-stack">
+      {entry.data.stack.map(s => <span class="chip">{s}</span>)}
+    </div>
+  )}
+  <Content />
+</NoteLayout>

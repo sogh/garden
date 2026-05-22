@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  narrow?: boolean;
+}
+
+const { title, description, narrow = false } = Astro.props;
+const siteTitle = 'garden';
+const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
+  </head>
+  <body>
+    <div class={narrow ? 'shell shell--narrow' : 'shell'}>
+      <header class="site-header">
+        <a class="site-title" href="/">{siteTitle}</a>
+        <nav>
+          <a href="/">recent</a>
+          <a href="/notes">notes</a>
+          <a href="/experiments">experiments</a>
+          <a href="/tags">tags</a>
+          <a href="/about">about</a>
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <span>quietly tended · {new Date().getFullYear()}</span>
+        <span>
+          <a href="/rss.xml">rss</a>
+          {' · '}
+          <a href="/colophon">colophon</a>
+        </span>
+      </footer>
+    </div>
+  </body>
+</html>

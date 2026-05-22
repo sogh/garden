@@ -1,0 +1,35 @@
+---
+/**
+ * Embeds a Rust/WASM experiment (or any standalone web app) in an iframe.
+ *
+ * Usage in MDX:
+ *   <WasmEmbed src="/experiments/foo/index.html" height={520} />
+ *
+ * For tighter integration (sharing styles, no iframe overhead), import the
+ * WASM module directly in a <script> tag instead. iframe is the safe default
+ * when the experiment has its own runtime, deps, or styling.
+ */
+interface Props {
+  src: string;
+  height?: number;
+  title?: string;
+  sandbox?: string;
+}
+
+const {
+  src,
+  height = 480,
+  title = 'experiment',
+  sandbox = 'allow-scripts allow-same-origin',
+} = Astro.props;
+---
+
+<iframe
+  class="embed-frame"
+  src={src}
+  height={height}
+  title={title}
+  sandbox={sandbox}
+  loading="lazy"
+  style={`height: ${height}px;`}
+></iframe>

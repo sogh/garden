@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="about" narrow>
+  <h1>about this garden</h1>
+
+  <p>
+    This is Mark's working notebook. Notes, embedded experiments, half-formed
+    thoughts. Some written directly, some drafted by an agent (look for the
+    badge). Roughness is the feature — most pages are intentionally short and
+    intentionally unfinished.
+  </p>
+
+  <p>
+    The structure borrows from <a href="https://notes.andymatuschak.org">Andy
+    Matuschak's notes</a>: atomic notes, aggressive linking, visible growth
+    states. There's no publish-vs-draft distinction beyond a flag in
+    frontmatter.
+  </p>
+
+  <h2>growth states</h2>
+  <ul>
+    <li><strong>seedling</strong> — just captured, rough, possibly wrong.</li>
+    <li><strong>budding</strong> — edited at least once, idea is shaping up.</li>
+    <li><strong>evergreen</strong> — durable, well-linked, I'd point someone at it.</li>
+  </ul>
+
+  <h2>provenance</h2>
+  <ul>
+    <li><strong>by hand</strong> — written directly.</li>
+    <li><strong>by agent</strong> — drafted by an agent, possibly lightly edited.</li>
+    <li><strong>human + agent</strong> — substantive back-and-forth.</li>
+  </ul>
+
+  <p>
+    The agent is a Claude instance reading <code>AGENTS.md</code> at the repo
+    root for voice and tag taxonomy. Most agent notes are short. Some get
+    promoted to budding or evergreen later.
+  </p>
+</BaseLayout>

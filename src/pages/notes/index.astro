@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GrowthIndicator from '../../components/GrowthIndicator.astro';
+import { getCollection } from 'astro:content';
+
+const notes = await getCollection('notes', e => !e.data.draft);
+notes.sort((a, b) => {
+  const aDate = a.data.updated ?? a.data.created;
+  const bDate = b.data.updated ?? b.data.created;
+  return bDate.getTime() - aDate.getTime();
+});
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+---
+
+<BaseLayout title="notes" narrow>
+  <h1>notes</h1>
+  <ul class="feed">
+    {notes.map(note => (
+      <li class="feed-item">
+        <div class="feed-item-head">
+          <a class="feed-item-title" href={`/notes/${note.id}`}>{note.data.title}</a>
+          <span class="feed-item-meta">{fmtDate(note.data.updated ?? note.data.created)}</span>
+        </div>
+        <div class="note-meta" style="margin-bottom: 0;">
+          <GrowthIndicator growth={note.data.growth} />
+          {note.data.tags.length > 0 && (
+            <>
+              <span class="sep">·</span>
+              <span>{note.data.tags.map(t => `#${t}`).join(' ')}</span>
+            </>
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

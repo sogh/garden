@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GrowthIndicator from '../components/GrowthIndicator.astro';
+import SourceBadge from '../components/SourceBadge.astro';
+import { getRecentEntries } from '../lib/backlinks';
+
+const recent = await getRecentEntries(30);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+const linkFor = (collection: string, id: string) => {
+  if (collection === 'notes') return `/notes/${id}`;
+  if (collection === 'experiments') return `/experiments/${id.replace(/\/index$/, '')}`;
+  if (collection === 'digests') return `/digests/${id}`;
+  if (collection === 'media') return `/media/${id}`;
+  return '/';
+};
+---
+
+<BaseLayout title="garden" description="raw updates, ideas, and tinkering">
+  <section style="margin-bottom: 3rem;">
+    <p style="font-size: 1.1rem; color: var(--ink-muted); font-style: italic; max-width: 32rem;">
+      A working notebook. Updates in progress, half-formed ideas, embedded
+      experiments. Roughness is the feature.
+    </p>
+  </section>
+
+  <ul class="feed">
+    {recent.map(entry => (
+      <li class="feed-item">
+        <div class="feed-item-head">
+          <a class="feed-item-title" href={linkFor(entry.collection, entry.id)}>
+            {entry.data.title}
+          </a>
+          <span class="feed-item-meta">
+            {fmtDate(entry.data.updated ?? entry.data.created)}
+            {' · '}
+            {entry.collection}
+          </span>
+        </div>
+        <div class="note-meta" style="margin-bottom: 0;">
+          <GrowthIndicator growth={entry.data.growth} />
+          {entry.data.source !== 'human' && (
+            <>
+              <span class="sep">·</span>
+              <SourceBadge source={entry.data.source} />
+            </>
+          )}
+          {entry.data.tags.length > 0 && (
+            <>
+              <span class="sep">·</span>
+              <span>{entry.data.tags.slice(0, 3).map(t => `#${t}`).join(' ')}</span>
+            </>
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

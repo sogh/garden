@@ -1,0 +1,23 @@
+---
+interface Props {
+  source: 'human' | 'agent' | 'collab';
+}
+const { source } = Astro.props;
+
+const labels = {
+  human: 'by hand',
+  agent: 'by agent',
+  collab: 'human + agent',
+};
+---
+
+<span
+  class={`source-badge source-badge--${source}`}
+  title={source === 'agent'
+    ? 'This note was drafted by an agent. Treat accordingly.'
+    : source === 'collab'
+      ? 'Drafted by an agent, edited by hand.'
+      : 'Written directly.'}
+>
+  {labels[source]}
+</span>

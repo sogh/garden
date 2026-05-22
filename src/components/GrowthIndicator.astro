@@ -1,0 +1,17 @@
+---
+interface Props {
+  growth: 'seedling' | 'budding' | 'evergreen';
+}
+const { growth } = Astro.props;
+
+const labels = {
+  seedling: 'seedling',
+  budding: 'budding',
+  evergreen: 'evergreen',
+};
+---
+
+<span class={`badge badge--${growth}`} title={`growth: ${labels[growth]}`}>
+  <span class="dot" aria-hidden="true"></span>
+  {labels[growth]}
+</span>

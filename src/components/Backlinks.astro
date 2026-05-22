@@ -1,0 +1,29 @@
+---
+import { getBacklinks } from '../lib/backlinks';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const backlinks = await getBacklinks(slug);
+---
+
+{backlinks.length > 0 && (
+  <section class="backlinks">
+    <h2>linked from</h2>
+    <ul>
+      {backlinks.map(b => (
+        <li>
+          <a
+            href={`/${b.collection === 'notes' ? 'notes' : b.collection}/${b.id}`}
+            class="backlink-title"
+          >
+            {b.title}
+          </a>
+          {b.excerpt && <div class="backlink-excerpt">{b.excerpt}</div>}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

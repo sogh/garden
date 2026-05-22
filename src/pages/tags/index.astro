@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllTags } from '../../lib/backlinks';
+
+const tags = await getAllTags();
+const sorted = [...tags.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="tags" narrow>
+  <h1>tags</h1>
+  <ul class="tag-list" style="gap: 1rem; font-size: 1rem;">
+    {sorted.map(([tag, count]) => (
+      <li>
+        <a class="tag" href={`/tags/${tag}`} style="font-size: 0.95rem;">
+          {tag}
+        </a>
+        <span style="color: var(--ink-faint); font-family: var(--mono); font-size: 0.75rem; margin-left: 0.3em;">
+          {count}
+        </span>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

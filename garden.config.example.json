@@ -1,0 +1,11 @@
+{
+  "_comment": "List the local paths to project repos for the digest CLI to scan.",
+  "_comment2": "Or override at runtime via the GARDEN_REPOS env var (comma-separated).",
+  "repos": [
+    { "name": "harmonic-atlas", "path": "../fretboard-explorer" },
+    { "name": "harmonia",       "path": "../harmonia" },
+    { "name": "dinner-party",   "path": "../dinner-party" },
+    { "name": "songmap",        "path": "../songmap" },
+    { "name": "spriteforge",    "path": "../spriteforge" }
+  ]
+}

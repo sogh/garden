@@ -1,0 +1,63 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SourceBadge from '../components/SourceBadge.astro';
+import GrowthIndicator from '../components/GrowthIndicator.astro';
+import Backlinks from '../components/Backlinks.astro';
+import GithubSlugger from 'github-slugger';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    created: Date;
+    updated?: Date;
+    tags: string[];
+    growth: 'seedling' | 'budding' | 'evergreen';
+    source: 'human' | 'agent' | 'collab';
+    kind?: string;
+  };
+  slug: string;
+}
+
+const { frontmatter, slug } = Astro.props;
+const slugger = new GithubSlugger();
+const normalizedSlug = slugger.slug(slug);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<BaseLayout title={frontmatter.title} narrow>
+  <article>
+    <header class="note-header">
+      <h1>{frontmatter.title}</h1>
+      <div class="note-meta">
+        <time datetime={frontmatter.created.toISOString()}>
+          {fmtDate(frontmatter.created)}
+        </time>
+        {frontmatter.updated && (
+          <>
+            <span class="sep">·</span>
+            <span>updated {fmtDate(frontmatter.updated)}</span>
+          </>
+        )}
+        <span class="sep">·</span>
+        <GrowthIndicator growth={frontmatter.growth} />
+        <span class="sep">·</span>
+        <SourceBadge source={frontmatter.source} />
+      </div>
+      {frontmatter.tags.length > 0 && (
+        <ul class="tag-list" style="margin-top: 0.8rem;">
+          {frontmatter.tags.map(t => (
+            <li><a href={`/tags/${t}`} class="tag">{t}</a></li>
+          ))}
+        </ul>
+      )}
+    </header>
+
+    <div class="note-body">
+      <slot />
+    </div>
+
+    <Backlinks slug={normalizedSlug} />
+  </article>
+</BaseLayout>
