@@ -22,11 +22,15 @@ const {
   title = 'experiment',
   sandbox = 'allow-scripts allow-same-origin',
 } = Astro.props;
+
+// Assets in public/ are not rewritten by Astro, so resolve root-relative srcs
+// against the mount point ourselves.
+const resolvedSrc = withBase(src);
 ---
 
 <iframe
   class="embed-frame"
-  src={src}
+  src={resolvedSrc}
   height={height}
   title={title}
   sandbox={sandbox}

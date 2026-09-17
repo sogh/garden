@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { withBase as href } from '../lib/site';
 
 interface Props {
   title: string;
@@ -9,6 +10,7 @@ interface Props {
 
 const { title, description, narrow = false } = Astro.props;
 const siteTitle = 'garden';
+
 const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
 ---
 
@@ -20,18 +22,18 @@ const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     {description && <meta name="description" content={description} />}
-    <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={siteTitle} href={href("/rss.xml")} />
   </head>
   <body>
     <div class={narrow ? 'shell shell--narrow' : 'shell'}>
       <header class="site-header">
-        <a class="site-title" href="/">{siteTitle}</a>
+        <a class="site-title" href={href("/")}>{siteTitle}</a>
         <nav>
-          <a href="/">recent</a>
-          <a href="/notes">notes</a>
-          <a href="/experiments">experiments</a>
-          <a href="/tags">tags</a>
-          <a href="/about">about</a>
+          <a href={href("/")}>recent</a>
+          <a href={href("/notes")}>notes</a>
+          <a href={href("/experiments")}>experiments</a>
+          <a href={href("/tags")}>tags</a>
+          <a href={href("/about")}>about</a>
         </nav>
       </header>
 
@@ -42,9 +44,9 @@ const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
       <footer class="site-footer">
         <span>quietly tended · {new Date().getFullYear()}</span>
         <span>
-          <a href="/rss.xml">rss</a>
+          <a href={href("/rss.xml")}>rss</a>
           {' · '}
-          <a href="/colophon">colophon</a>
+          <a href={href("/colophon")}>colophon</a>
         </span>
       </footer>
     </div>

@@ -142,18 +142,49 @@ To enable:
 2. Edit the `Checkout <project>` steps in the workflow to match your repos.
 3. Update the `GARDEN_REPOS` env var to match the checkout paths.
 
-## Deploying to Cloudflare Pages
+## Deploying
 
-The fastest path to production:
+Live at **https://sogh.github.io/garden**, built and deployed by
+`.github/workflows/deploy.yml` on every push to `master`.
 
-1. Push this repo to GitHub.
-2. Cloudflare Pages → Create project → connect the repo.
-3. Build command: `npm run build`. Output: `dist`. Framework: Astro (auto-detected).
-4. (Optional) Add a custom domain.
+```bash
+git add -A && git commit -m "new note" && git push   # that's the deploy
+gh run watch                                          # follow the build
+gh run list --workflow=deploy.yml                     # recent deploys
+gh workflow run deploy.yml                            # re-deploy, no commit
+```
 
-That's it. Static output, free tier, fast.
+### The base path
 
-Alternatives: Vercel, Netlify, GitHub Pages, anywhere that serves static files.
+The site is served from `/garden`, not the domain root. `src/lib/site.ts` holds
+`BASE_PATH` and a `withBase()` helper, and **every internal link must go
+through it** — Astro rewrites its own asset URLs from `base`, but not
+hand-written hrefs or anything in `public/`:
+
+```astro
+---
+import { withBase } from '../lib/site';
+---
+<a href={withBase(`/notes/${id}`)}>...</a>
+<WasmEmbed src="/experiments/foo/index.html" />  <!-- handled internally -->
+```
+
+Moving to a custom domain (or renaming the repo to `sogh.github.io`) means
+setting `BASE_PATH = ''` in `src/lib/site.ts` and dropping `base` from
+`astro.config.mjs`. Nothing else changes.
+
+### Custom domain
+
+1. `gh api -X PUT repos/sogh/garden/pages -f cname=garden.example.com`
+2. Add a DNS `CNAME` record pointing at `sogh.github.io`.
+3. Set `BASE_PATH = ''` and `site` in `astro.config.mjs` to the new hostname.
+
+### Note on WASM threads
+
+GitHub Pages cannot set custom HTTP headers, so `SharedArrayBuffer` is
+unavailable — single-threaded WASM is fine, threaded (`wasm-bindgen-rayon`)
+is not. If an experiment needs it, Cloudflare Pages supports a `_headers`
+file with `Cross-Origin-Opener-Policy` / `Cross-Origin-Embedder-Policy`.
 
 ## What's intentionally not here
 

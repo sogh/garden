@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/site';
 import { getCollection } from 'astro:content';
 
 const experiments = await getCollection('experiments', e => !e.data.draft);
@@ -24,7 +25,7 @@ const slugify = (id: string) => id.replace(/\/index$/, '');
     {experiments.map(e => (
       <li class="feed-item">
         <div class="feed-item-head">
-          <a class="feed-item-title" href={`/experiments/${slugify(e.id)}`}>{e.data.title}</a>
+          <a class="feed-item-title" href={withBase(`/experiments/${slugify(e.id)}`)}>{e.data.title}</a>
           <span class="feed-item-meta">{fmtDate(e.data.updated ?? e.data.created)}</span>
         </div>
         {e.data.stack.length > 0 && (

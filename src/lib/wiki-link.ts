@@ -1,6 +1,7 @@
 // @ts-expect-error - remark-wiki-link doesn't ship types
 import wikiLink from 'remark-wiki-link';
 import GithubSlugger from 'github-slugger';
+import { withBase } from './site';
 
 const slugger = new GithubSlugger();
 
@@ -17,7 +18,7 @@ export const wikiLinkPlugin = [
       slugger.reset();
       return [slugger.slug(name)];
     },
-    hrefTemplate: (permalink: string): string => `/notes/${permalink}`,
+    hrefTemplate: (permalink: string): string => withBase(`/notes/${permalink}`),
     aliasDivider: '|',
     wikiLinkClassName: 'wiki-link',
     newClassName: 'wiki-link--broken',

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/site';
 import GrowthIndicator from '../components/GrowthIndicator.astro';
 import SourceBadge from '../components/SourceBadge.astro';
 import { getRecentEntries } from '../lib/backlinks';
@@ -10,9 +11,9 @@ const fmtDate = (d: Date) =>
   d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
 const linkFor = (collection: string, id: string) => {
-  if (collection === 'notes') return `/notes/${id}`;
-  if (collection === 'experiments') return `/experiments/${id.replace(/\/index$/, '')}`;
-  if (collection === 'digests') return `/digests/${id}`;
+  if (collection === 'notes') return withBase(`/notes/${id}`);
+  if (collection === 'experiments') return withBase(`/experiments/${id.replace(/\/index$/, '')}`);
+  if (collection === 'digests') return withBase(`/digests/${id}`);
   if (collection === 'media') return `/media/${id}`;
   return '/';
 };

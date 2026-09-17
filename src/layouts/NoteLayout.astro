@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { withBase } from '../lib/site';
 import SourceBadge from '../components/SourceBadge.astro';
 import GrowthIndicator from '../components/GrowthIndicator.astro';
 import Backlinks from '../components/Backlinks.astro';
@@ -48,7 +49,7 @@ const fmtDate = (d: Date) =>
       {frontmatter.tags.length > 0 && (
         <ul class="tag-list" style="margin-top: 0.8rem;">
           {frontmatter.tags.map(t => (
-            <li><a href={`/tags/${t}`} class="tag">{t}</a></li>
+            <li><a href={withBase(`/tags/${t}`)} class="tag">{t}</a></li>
           ))}
         </ul>
       )}

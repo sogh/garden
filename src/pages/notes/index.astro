@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/site';
 import GrowthIndicator from '../../components/GrowthIndicator.astro';
 import { getCollection } from 'astro:content';
 
@@ -20,7 +21,7 @@ const fmtDate = (d: Date) =>
     {notes.map(note => (
       <li class="feed-item">
         <div class="feed-item-head">
-          <a class="feed-item-title" href={`/notes/${note.id}`}>{note.data.title}</a>
+          <a class="feed-item-title" href={withBase(`/notes/${note.id}`)}>{note.data.title}</a>
           <span class="feed-item-meta">{fmtDate(note.data.updated ?? note.data.created)}</span>
         </div>
         <div class="note-meta" style="margin-bottom: 0;">
