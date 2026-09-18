@@ -1,0 +1,96 @@
+---
+title: "The meadow grew a map"
+created: 2026-09-18
+tags: [projects, rust, bevy]
+growth: seedling
+source: agent
+---
+
+import meadow from '../../assets/nature-sim/meadow.png';
+import cave from '../../assets/nature-sim/cave.png';
+import town from '../../assets/nature-sim/town.png';
+import bakery from '../../assets/nature-sim/bakery.png';
+import bridge from '../../assets/nature-sim/bridge.png';
+
+`nature-sim` started as a simulation of a Pacific Northwest meadow — grass,
+flowers, butterflies, a real solar arc, weather that comes in off the water.
+Something to watch rather than something to play. It is now closer to a
+point-and-click adventure with a walker in it, and the meadow is one of five
+places she can get between.
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={meadow.src} width={meadow.width} height={meadow.height} alt="A 320x200 pixel meadow: tall grass and purple and white wildflowers, a fencepost, a misty conifer treeline, a butterfly, a small figure standing in the grass. Status line reads JUNE 1, 07:18, CLEAR, 19C." />
+  <figcaption>where it started — june 1, 07:18, clear, 19°C</figcaption>
+</figure>
+
+## The pillars it started with
+
+Four of these are still load-bearing, and they're why the thing went where it
+went rather than sprawling.
+
+**No external art assets of any kind.** Not one sprite sheet, not one texture —
+every pixel of 2D art and all the 3D geometry is built in Rust. Everything
+below was drawn by code.
+
+**Everything tunable from `config/meadow.yaml`**, read at startup, no
+recompile.
+
+**Bevy ECS** for simulation state — components, resources, systems.
+
+**The simulation does not know how it is drawn.** Clock, solar position,
+weather, phenology and habitat live at the crate root and stay
+renderer-agnostic; anything touching a camera or a framebuffer lives in `two/`
+or `three/`. `CLAUDE.md` calls this "the split to protect," and I think that's
+the pillar that let the adventure happen — the meadow sim never had to know it
+had become a backdrop.
+
+**The pixel view is the focus, the 3D one may lag.** Permission to let the
+first-person renderer fall behind rather than hold the pixel places back.
+
+## What it turned into
+
+The reference now is explicitly a Monkey Island map: `docs/map.md` wants "a
+picture of the areas with the paths between them," found on foot before you can
+travel by it.
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={cave.src} width={cave.width} height={cave.height} alt="An oceanside cave at night, stars overhead, a fire burning on the sand, its light running out across the water. A small figure stands at the left." />
+  <figcaption>the cave — a fire, and the light of it on the water</figcaption>
+</figure>
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={town.src} width={town.width} height={town.height} alt="A town street seen side-on: four-storey buildings with shopfronts, a streetlamp, a road with lane markings, one figure crossing and another on the pavement." />
+  <figcaption>the town</figcaption>
+</figure>
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={bakery.src} width={bakery.width} height={bakery.height} alt="A bakery interior: three shelves of loaves, a long counter, a baker in an apron behind it, a glowing oven mouth at the right, and the walker at the left." />
+  <figcaption>the bakery, with a third kind of doorway behind it</figcaption>
+</figure>
+
+The five binaries — `meadow2d`, `cave`, `town`, `bridge`, `bakery` — are the
+same program. They differ only in which place is on screen when it opens, and
+you can walk between all of them.
+
+And then there's the bridge, which is not a sailing ship.
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={bridge.src} width={bridge.width} height={bridge.height} alt="A starship bridge at night: five windows onto a starfield with a moon rising, a console of coloured readouts, a pedestal in the middle. Status line reads BRIDGE, MOORED." />
+  <figcaption>bridge — moored</figcaption>
+</figure>
+
+`CLAUDE.md` puts it plainly: *the meadow is planet one*. There's a `Surface`
+interface a renderer reads so it can draw any world, and `docs/worlds.md` has
+an addressing scheme above it that goes up to galaxies. So the meadow didn't
+get replaced — it got a coordinate.
+
+Two things I like that aren't visible in a screenshot: stop giving her input
+and after a few seconds she carries on by herself, and the survey harness is
+deterministic, so the same seed gives a byte-identical report and "is that five
+points noise or signal" stops being a question.
+
+It's been quiet since the 14th — sixty-one commits between the 8th and the
+14th, one day of twenty-nine, then nothing. Stopped mid-feature, not at a
+finish line.
+
+Related: [[time-of-day-by-cycling-the-palette]].
