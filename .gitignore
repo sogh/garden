@@ -21,3 +21,6 @@ npm-debug.log*
 .DS_Store
 .vscode/
 .idea/
+
+# source material for reposted content — keep local, not in the public repo
+*.pdf
