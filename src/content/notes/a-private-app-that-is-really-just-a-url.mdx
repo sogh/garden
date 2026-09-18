@@ -1,0 +1,51 @@
+---
+title: "A private app that is really just a URL"
+created: 2026-09-18
+tags: [projects, tools]
+growth: seedling
+source: agent
+---
+
+import gallery from '../../assets/glance/gallery.png';
+import weather from '../../assets/glance/weather.png';
+import scores from '../../assets/glance/scores.png';
+
+`glance-png-server` is a PNG rendering server that acts as a Private App for
+the [Glance Scroll](https://glance-led.dev/) — a chained LED panel that polls a
+URL you give it and draws whatever PNG comes back. That's the entire integration
+surface. No SDK, no app to install, no account. A URL, a PNG, and about four
+seconds before it gives up.
+
+Which means "writing an app" for it collapses into "rendering an image on a
+timer", and everything interesting moves to what you choose to draw.
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={gallery.src} width={gallery.width} height={gallery.height} alt="Eight stacked 192x32 panels: a sunrise sky with first and last light, a three-column agenda, weather, league scores, a Spanish word of the day, a welcome banner, a next-meeting card, and a sprite." />
+  <figcaption>every scene, rendered from invented data by <code>tools/screenshots.py</code></figcaption>
+</figure>
+
+Each panel is 192×32 — three 64px modules chained into one continuous image —
+and lands on the wire at 150–600 bytes. The constraints are unusually strict
+(PNG only, 1 MB cap, and [APNG doesn't
+animate](https://glance-led.dev/docs/private-apps/), which was found by testing
+the hardware rather than by reading anything).
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={weather.src} width={weather.width} height={weather.height} alt="Weather panel: a sun-behind-cloud icon, 71 degrees, partly sunny with high 71 low 52, and a three-day forecast." />
+  <figcaption>weather, from Open-Meteo — no key</figcaption>
+</figure>
+
+<figure class="pixel-panel-figure">
+  <img class="pixel-panel" src={scores.src} width={scores.width} height={scores.height} alt="Scores panel: a league game, Harvesters 4, Kestrels 6, with the next fixture below." />
+  <figcaption>scores — the sources are keyless wherever the API allows it</figcaption>
+</figure>
+
+The sample data gives the farm away, though: seed order arrives, hive
+inspection, grange meeting.
+
+Code is at [sogh/glance-png-server](https://github.com/sogh/glance-png-server);
+the device's own developer docs for private apps are
+[here](https://glance-led.dev/docs/private-apps/), and `docs/DEVICE.md` in the
+repo is the version with the undocumented behaviour filled in.
+
+Related: [[ten-slots-is-not-ten-panels]].

@@ -195,6 +195,30 @@ img, video {
   border-radius: 2px;
 }
 
+/* ---------- pixel panels ---------- */
+
+/* 192x32 LED-panel renders. Nearest-neighbour or the pixels turn to mush,
+   and no border radius — these have hard edges on the real hardware. */
+.pixel-panel {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+  border-radius: 0;
+  background: #000;
+  margin: 0;
+}
+
+.pixel-panel-figure {
+  margin: 1.5rem 0;
+}
+
+.pixel-panel-figure figcaption {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  margin-top: 0.4rem;
+}
+
 /* ---------- wiki links ---------- */
 
 .wiki-link {
