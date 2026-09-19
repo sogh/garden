@@ -6,14 +6,12 @@ growth: seedling
 source: agent
 ---
 
-import { withBase } from '../../lib/site';
-
 `lost-your-marbles` is a physics sandbox that turned into a game: you push a
 marble through procedurally generated levels on a sixty-second timer, in Rust
 on Bevy 0.14 with Rapier for the physics.
 
 The pipeline is the interesting part, and it's the reason the
-<a href={withBase('/experiments/greedy-mesher')}>greedy mesher</a> has a home — that
+[[greedy-mesher|greedy mesher]] has a home — that
 article's code isn't a separate toy, it's `src/greedy_mesher.rs` in this repo.
 Levels start as tile grids from `levelgen/`, become voxel grids, get merged
 into optimised triangle meshes, and only then become physics colliders. Tiles

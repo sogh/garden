@@ -12,42 +12,74 @@ const slugify = (name: string): string => {
   return slugger.slug(name);
 };
 
-const NOTES_DIR = fileURLToPath(new URL('../content/notes', import.meta.url));
+const CONTENT_DIR = fileURLToPath(new URL('../content', import.meta.url));
 
 /**
- * Every note slug that currently exists, for remark-wiki-link's `permalinks`.
- *
- * Without this the plugin has nothing to match against, so it treats *every*
- * target as missing and marks all links broken — including the ones that
- * resolve fine. Slugs go through the same slugify() as the link text so the
- * two sides always agree.
- *
- * Read once at config load: a note added while `astro dev` is running needs a
- * restart before links to it stop showing as broken.
+ * Collections a [[wiki-link]] can point at, in precedence order for the rare
+ * case where two collections hold the same slug. `media` is absent on purpose:
+ * it has no route, so there'd be nothing to link to.
  */
-function existingNoteSlugs(): string[] {
-  try {
-    return readdirSync(NOTES_DIR, { recursive: true, encoding: 'utf8' })
-      .filter(f => /\.mdx?$/.test(f))
-      .map(f => slugify(f.replace(/\.mdx?$/, '')));
-  } catch {
-    // No notes directory yet — every link is legitimately broken.
-    return [];
+const LINKABLE = ['notes', 'experiments', 'digests'] as const;
+
+/**
+ * Every linkable slug mapped to its URL path.
+ *
+ * Two jobs in one pass: the keys are remark-wiki-link's `permalinks` (without
+ * them it marks every link broken), and the values let `hrefTemplate` send a
+ * link to the collection that actually holds it, instead of assuming /notes/.
+ *
+ * Experiments are `<name>/index.mdx`, so the slug is the directory — matching
+ * both the route and what someone would type in a link.
+ *
+ * Read once at config load: a new entry needs an `astro dev` restart before
+ * links to it resolve.
+ */
+function linkTargets(): Map<string, string> {
+  const targets = new Map<string, string>();
+
+  for (const collection of LINKABLE) {
+    let files: string[];
+    try {
+      files = readdirSync(`${CONTENT_DIR}/${collection}`, {
+        recursive: true,
+        encoding: 'utf8',
+      });
+    } catch {
+      continue; // collection directory doesn't exist yet
+    }
+
+    for (const file of files) {
+      if (!/\.mdx?$/.test(file)) continue;
+      const bare = file.replace(/\.mdx?$/, '');
+      // experiments/<name>/index.mdx -> <name>; notes/<name>.md -> <name>
+      const name = collection === 'experiments' ? bare.replace(/\/index$/, '') : bare;
+      if (!name || name.includes('/index')) continue;
+      const slug = slugify(name);
+      if (!targets.has(slug)) targets.set(slug, `/${collection}/${name}`);
+    }
   }
+
+  return targets;
 }
 
+const TARGETS = linkTargets();
+
 /**
- * Remark plugin that resolves [[wiki-links]] to /notes/{slug} URLs.
+ * Remark plugin that resolves [[wiki-links]] across notes, experiments and
+ * digests.
  *
- * Links to non-existent notes get a `wiki-link--broken` class so you can style
- * them differently — useful for spotting dangling references in the garden.
+ * Links to entries that don't exist get a `wiki-link--broken` class so you can
+ * style them differently — useful for spotting dangling references.
  */
 export const wikiLinkPlugin = [
   wikiLink,
   {
-    permalinks: existingNoteSlugs(),
+    permalinks: [...TARGETS.keys()],
     pageResolver: (name: string): string[] => [slugify(name)],
-    hrefTemplate: (permalink: string): string => withBase(`/notes/${permalink}`),
+    // Unknown slugs still render (as broken); point them at /notes/, where a
+    // stub would most likely be created.
+    hrefTemplate: (permalink: string): string =>
+      withBase(TARGETS.get(permalink) ?? `/notes/${permalink}`),
     aliasDivider: '|',
     wikiLinkClassName: 'wiki-link',
     newClassName: 'wiki-link--broken',

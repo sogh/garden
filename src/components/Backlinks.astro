@@ -1,6 +1,6 @@
 ---
 import { getBacklinks } from '../lib/backlinks';
-import { withBase } from '../lib/site';
+import { withBase, entryPath } from '../lib/site';
 
 interface Props {
   slug: string;
@@ -17,7 +17,7 @@ const backlinks = await getBacklinks(slug);
       {backlinks.map(b => (
         <li>
           <a
-            href={withBase(`/${b.collection === 'notes' ? 'notes' : b.collection}/${b.id}`)}
+            href={withBase(entryPath(b.collection, b.id))}
             class="backlink-title"
           >
             {b.title}
