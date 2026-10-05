@@ -7,10 +7,11 @@ digest jobs) writing into this garden. Read this first.
 
 Mark — software engineer, lives on Evergreen Farm on Camano Island with
 Megan and Lindsey. Side projects span music theory tooling (`fretboard-explorer`
-/ Harmonic Atlas, `harmonia` Rust crate), game development in Rust/Bevy
-(`dinner-party`, `spriteforge`), and creative tools (`songmap`). Plays guitar
-in a band. Built this garden to capture in-progress thinking without the
-overhead of a devblog.
+/ Harmonic Atlas, `harmonia` Rust crate), game development in Rust
+(`spriteforge`, the `promenade` drama engine), a TypeScript social sim
+(`dinner-party`), and creative tools (`songmap`). Plays guitar in a band.
+Built this garden to capture in-progress thinking without the overhead of a
+devblog.
 
 ## Voice
 
@@ -60,7 +61,8 @@ a new tag, suggest it in the PR/diff rather than just using it.
 - `harmonic-atlas` — the named music tool project
 - `barry-harris` — Barry Harris methodology specifically
 - `harmonia` — the Rust crate
-- `dinner-party` — the Bevy drama-engine game
+- `dinner-party` — the TypeScript dinner-party sim (repo `dinner-party-sim`);
+  not `promenade`, which is a separate Rust drama engine
 - `spriteforge` — the sprite middleware
 - `songmap` — the band teaching tool
 - `bevy` — Bevy/Rust game-dev topics generically
