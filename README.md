@@ -145,7 +145,7 @@ To enable:
 ## Deploying
 
 Live at **https://sogh.github.io/garden**, built and deployed by
-`.github/workflows/deploy.yml` on every push to `master`.
+`.github/workflows/deploy.yml` on every push to `main`.
 
 ```bash
 git add -A && git commit -m "new note" && git push   # that's the deploy
