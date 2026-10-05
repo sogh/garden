@@ -1,0 +1,83 @@
+---
+title: "Voxel art without a mesh: a CPU raycaster that walks the grid"
+created: 2026-10-05
+tags: [rust, projects]
+growth: seedling
+source: agent
+stack: [rust, glam, image, rayon, voxels]
+repo: https://github.com/sogh/voxel-artist
+---
+
+import multi from './multi.png';
+import hills from './hills.png';
+import carved from './carved.png';
+import resolution from './resolution.png';
+
+`voxel-artist` is a small Rust crate from a week in September 2025 (14 commits,
+about 640 lines in `src/`). The whole pipeline is: fill a `VoxelGrid` with
+colours from procedural shapes, shoot one ray per pixel through it on the CPU,
+write a PNG (or a GIF, as of the fifth day). No meshes, no GPU, no assets.
+
+The part I like is how little a shape has to be. `Shape` is one method,
+`color_at(x, y, z) -> Option<Color>`, and `rasterize_shape` just asks it about
+every voxel centre. A sphere is a distance check, and the cone and pyramid
+(added later) are "how wide am I at this height." Later shapes overwrite
+earlier ones, so a scene is just the order you call things in.
+
+<figure>
+  <img src={multi.src} width={multi.width} height={multi.height} alt="A dark slab with a large magenta voxel sphere, a smaller blue sphere behind it, an orange stepped cone and a small yellow-green stepped pyramid, lit from above with faint fog." />
+  <figcaption>the repo's own `multi` example, unchanged</figcaption>
+</figure>
+
+Rendering is a 3D DDA: clip the ray to the grid's bounding box, then step
+voxel to voxel, always crossing whichever axis boundary comes next, until
+something is filled. The nice side effect is that the axis you last stepped
+across *is* the surface normal, so shading comes for free. It's ambient plus
+one Lambert term plus optional exponential fog on hit distance. Every face
+points along one of six directions, so it can only take one of six
+brightnesses, and that's why the spheres get those terraced contour rings
+instead of smooth shading. I think that's most of what gives it the look.
+
+Because `Shape` is a public trait, you can write your own without touching
+the library. These next three are scenes written for this post (they live as
+extra examples in a scratch clone, not in the repo). A heightfield `Shape`
+with colour bands by height, plus `Cone` trees:
+
+<figure>
+  <img src={hills.src} width={hills.width} height={hills.height} alt="A 96-wide block of voxel terrain: green terraced hills, grey rock and white snow caps on the peaks, blue lakes edged with sand, and a few dark green cone-shaped trees, against a pale blue sky." />
+  <figcaption>a custom heightfield shape on a 96×40×96 grid (written for this post)</figcaption>
+</figure>
+
+There's no subtract operation, but `VoxelGrid::clear` is public, so carving is
+just a loop:
+
+<figure>
+  <img src={carved.src} width={carved.width} height={carved.height} alt="A pale blue voxel cube with a spherical bite taken out of one corner, showing stepped inner walls, and a small red-and-yellow striped voxel ball sitting inside the hollow." />
+  <figcaption>cube, sphere cleared out of it, striped custom shape inside (written for this post)</figcaption>
+</figure>
+
+And the voxel size is the whole aesthetic dial. Same three shapes at 8³, 16³
+and 64³:
+
+<figure>
+  <img src={resolution.src} width={resolution.width} height={resolution.height} alt="Three renders side by side of a magenta sphere and an orange cone on a slab. At 8 cubed they are a few crude boxes; at 16 cubed recognisably round but chunky; at 64 cubed the sphere shows fine contour rings and the cone is a smooth stepped spire." />
+  <figcaption>grid resolution 8, 16, 64 (written for this post)</figcaption>
+</figure>
+
+That's the same trade the [[greedy-mesher]] makes: it starts from the same idea
+(a grid filled from maths at voxel centres) and turns it into polygons for a
+game engine, where this one never leaves the grid and just raycasts it. Both
+are the same itch as [[the-meadow-grew-a-map]], drawing things from code
+rather than making assets. There's also a longer walkthrough sitting in the
+repo as `BLOG.md`.
+
+A couple of loose ends I noticed. The comment on `RenderSettings::light_dir`
+says it points *toward* the light, but the shader uses `n · -light_dir`, so it
+actually behaves as the direction the light travels. The `sphere` example
+follows the comment and negates it, so I think its light sweep is lighting the
+faces pointing *away* from where the light is meant to be (from below, too). And the README's
+usage snippet builds `RenderSettings` without the light and fog fields added
+later, so it wouldn't compile as written. No shadows either, which `BLOG.md`
+already lists as a next step.
+
+Listed with everything else in [[everything-on-github]].
